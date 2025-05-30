@@ -1,10 +1,15 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import userImg from "./assets/user.avif";
 import { TiDelete } from "react-icons/ti";
 import { IoIosSettings } from "react-icons/io";
 import { FiLogOut } from "react-icons/fi";
 import { successToast } from "./utils/tost";
+
+import userImg from "./assets/user.avif";
+import userImg2 from "./assets/user2.jpeg";
+import userImg3 from "./assets/user3.jpg";
+import userImg4 from "./assets/user4.jpg";
+import userImg5 from "./assets/user5.jpg";
 
 const App = () => {
   const navigate = useNavigate();
@@ -40,7 +45,7 @@ const App = () => {
       date: "2025-04-28",
       role: "Editor",
       status: "Active",
-      image: userImg,
+      image: userImg2,
     },
     {
       id: 3,
@@ -48,7 +53,7 @@ const App = () => {
       date: "2025-03-15",
       role: "Viewer",
       status: "Inactive",
-      image: userImg,
+      image: userImg4,
     },
     {
       id: 4,
@@ -56,7 +61,7 @@ const App = () => {
       date: "2025-01-12",
       role: "Admin",
       status: "Active",
-      image: userImg,
+      image: userImg3,
     },
     {
       id: 5,
@@ -64,7 +69,7 @@ const App = () => {
       date: "2024-12-20",
       role: "Editor",
       status: "Inactive",
-      image: userImg,
+      image: userImg5,
     },
   ];
 

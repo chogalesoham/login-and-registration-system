@@ -4,23 +4,8 @@ import "./index.css";
 import App from "./App.jsx";
 import Ragister from "./pages/ragister.jsx";
 import Login from "./pages/login.jsx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Login />,
-  },
-  {
-    path: "/ragister",
-    element: <Ragister />,
-  },
-  {
-    path: "/home",
-    element: <App />,
-  },
-]);
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -30,8 +15,14 @@ createRoot(document.getElementById("root")).render(
         background: "linear-gradient(to bottom, #007782, #029BA0, #00BFBA)",
       }}
     >
-      <RouterProvider router={router} />
-      <Toaster />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/ragister" element={<Ragister />} />
+          <Route path="/home" element={<App />} />
+        </Routes>
+        <Toaster />
+      </BrowserRouter>
     </div>
   </StrictMode>
 );
