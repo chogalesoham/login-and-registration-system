@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { FaUserAlt } from "react-icons/fa";
 import { FaUnlockKeyhole } from "react-icons/fa6";
-import { FaRegUserCircle } from "react-icons/fa";
+import { FaRegUserCircle, FaSpinner } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { errorToast, successToast } from "../utils/tost";
+
 const Base_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [loginInfo, setLoginInfo] = useState({
@@ -14,7 +16,7 @@ const Login = () => {
     password: "",
   });
 
-  const handleInpute = (e) => {
+  const handleInput = (e) => {
     const { name, value } = e.target;
     setLoginInfo((prev) => ({ ...prev, [name]: value }));
   };
@@ -22,6 +24,7 @@ const Login = () => {
   const handleLoginUser = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const res = await fetch(`${Base_URL}/auth/login`, {
         method: "POST",
         headers: {
@@ -30,20 +33,30 @@ const Login = () => {
         body: JSON.stringify(loginInfo),
       });
       const result = await res.json();
-      const { message, token, user } = result;
-      localStorage.setItem("token", JSON.stringify(token));
-      localStorage.setItem("login-user", JSON.stringify(user));
-      successToast(message);
-      navigate("/");
+      console.log(result);
+
+      const { message, token, user, success } = result;
+      if (success === true) {
+        localStorage.setItem("token", JSON.stringify(token));
+        localStorage.setItem("login-user", JSON.stringify(user));
+        successToast(message);
+        setLoading(false);
+        navigate("/home");
+      } else {
+        errorToast(message || "Login failed");
+        setLoading(false);
+      }
     } catch (error) {
-      errorToast("Error to Login user");
+      setLoading(false);
+      errorToast("Error during login");
+      console.error("Login error:", error);
     }
   };
 
   return (
     <div className="w-[400px] bg-[#1E2C51] p-6 rounded-xl shadow-md text-white relative m-2">
       <div className="mb-6 flex justify-center">
-        <FaRegUserCircle className=" text-7xl  my-1 font-extralight text-[#79839E]  rounded-full shadow-lg " />
+        <FaRegUserCircle className="text-7xl my-1 font-extralight text-[#79839E] rounded-full shadow-lg" />
       </div>
 
       <form onSubmit={handleLoginUser} className="space-y-4">
@@ -56,7 +69,7 @@ const Login = () => {
             required
             name="email"
             value={loginInfo.email}
-            onChange={handleInpute}
+            onChange={handleInput}
             type="email"
             placeholder="User Email"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300"
@@ -72,8 +85,8 @@ const Login = () => {
             required
             name="password"
             value={loginInfo.password}
-            onChange={handleInpute}
-            type="text"
+            onChange={handleInput}
+            type="password"
             placeholder="Password"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300"
           />
@@ -84,16 +97,19 @@ const Login = () => {
           <label className="text-white">Remember Me</label>
         </div>
 
-        <button className="w-full py-3 bg-[#00F4E2] text-white font-semibold rounded-md hover:bg-[#00dfce] transition cursor-pointer">
-          LOGIN
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#00F4E2] text-white font-semibold rounded-md hover:bg-[#00dfce] transition cursor-pointer flex items-center justify-center"
+        >
+          {loading ? <FaSpinner className="animate-spin text-xl" /> : "LOGIN"}
         </button>
         <p className="text-sm text-gray-300 text-center">
-          Already have an account?{" "}
+          Don't have an account?{" "}
           <Link
             to="/ragister"
             className="text-[#00F4E2] font-medium hover:underline hover:text-[#00dfce] transition"
           >
-            SING IN
+            SIGN UP
           </Link>
         </p>
       </form>

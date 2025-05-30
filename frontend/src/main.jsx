@@ -10,15 +10,15 @@ import toast, { Toaster } from "react-hot-toast";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Login />,
   },
   {
     path: "/ragister",
     element: <Ragister />,
   },
   {
-    path: "/login",
-    element: <Login />,
+    path: "/home",
+    element: <App />,
   },
 ]);
 

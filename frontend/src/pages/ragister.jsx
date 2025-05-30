@@ -1,53 +1,70 @@
 import React, { useState } from "react";
-import { FaRegCalendarAlt, FaUserAlt } from "react-icons/fa";
+import {
+  FaRegCalendarAlt,
+  FaUserAlt,
+  FaRegUserCircle,
+  FaSpinner,
+} from "react-icons/fa";
 import { FaUnlockKeyhole } from "react-icons/fa6";
-import { FaRegUserCircle } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import { errorToast, successToast } from "../utils/tost";
 
 const Base_URL = import.meta.env.VITE_API_URL;
 
-const Ragister = () => {
+const Register = () => {
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [singinInfo, setSinginInfo] = useState({
+  const [registerInfo, setRegisterInfo] = useState({
     name: "",
     dob: "",
     email: "",
     password: "",
   });
 
-  const handleInpute = (e) => {
+  const handleInput = (e) => {
     const { name, value } = e.target;
-    setSinginInfo((prev) => ({ ...prev, [name]: value }));
-    console.log(singinInfo);
+    setRegisterInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRagisterUser = async (e) => {
+  const handleRegisterUser = async (e) => {
     e.preventDefault();
     try {
-      const res = fetch(`${Base_URL}/auth/registration`, {
+      setLoading(true);
+      const res = await fetch(`${Base_URL}/auth/registration`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(singinInfo),
+        body: JSON.stringify(registerInfo),
       });
-      successToast("User Ragister Successfull");
-      navigate("/login");
+
+      const result = await res.json();
+
+      const { success, message } = result;
+
+      if (success) {
+        successToast("User Registered Successfully");
+        setLoading(false);
+        navigate("/");
+      } else {
+        errorToast(message || "Registration failed");
+        setLoading(false);
+      }
     } catch (error) {
-      errorToast("Error in User Ragistration");
-      console.log("Error in User Ragistration");
+      setLoading(false);
+      errorToast("Error in User Registration");
+      console.error("Error in User Registration:", error);
     }
   };
 
   return (
     <div className="w-[400px] bg-[#1E2C51] p-6 rounded-xl shadow-md text-white relative m-2">
       <div className="mb-6 flex justify-center">
-        <FaRegUserCircle className="text-7xl  my-1 font-extralight text-[#79839E] rounded-full shadow-lg" />
+        <FaRegUserCircle className="text-7xl my-1 font-extralight text-[#79839E] rounded-full shadow-lg" />
       </div>
 
-      <form onSubmit={handleRagisterUser} className="space-y-4">
+      <form onSubmit={handleRegisterUser} className="space-y-4">
         <div className="flex items-center gap-3 bg-[#2D3E6C] px-4 py-3 rounded-md">
           <label className="text-[#00F4E2]">
             <FaUserAlt />
@@ -56,8 +73,8 @@ const Ragister = () => {
           <input
             required
             name="name"
-            value={singinInfo.name}
-            onChange={handleInpute}
+            value={registerInfo.name}
+            onChange={handleInput}
             type="text"
             placeholder="Username"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300"
@@ -72,8 +89,8 @@ const Ragister = () => {
           <input
             required
             name="dob"
-            value={singinInfo.dob}
-            onChange={handleInpute}
+            value={registerInfo.dob}
+            onChange={handleInput}
             type="date"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300 appearance-none"
           />
@@ -87,8 +104,8 @@ const Ragister = () => {
           <input
             required
             name="email"
-            value={singinInfo.email}
-            onChange={handleInpute}
+            value={registerInfo.email}
+            onChange={handleInput}
             type="email"
             placeholder="Email"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300"
@@ -103,26 +120,24 @@ const Ragister = () => {
           <input
             required
             name="password"
-            value={singinInfo.password}
-            onChange={handleInpute}
+            value={registerInfo.password}
+            onChange={handleInput}
             type="password"
             placeholder="Password"
             className="bg-transparent outline-none flex-1 text-white placeholder-gray-300"
           />
         </div>
 
-        <div className="flex items-center gap-2 text-sm">
-          <input type="checkbox" className="accent-[#00F4E2]" />
-          <label className="text-white">Remember Me</label>
-        </div>
-
-        <button className="w-full py-3 bg-[#00F4E2] text-white font-semibold rounded-md hover:bg-[#00dfce] transition cursor-pointer">
-          SING IN
+        <button
+          type="submit"
+          className="w-full py-3 bg-[#00F4E2] text-white font-semibold rounded-md hover:bg-[#00dfce] transition cursor-pointer flex items-center justify-center"
+        >
+          {loading ? <FaSpinner className="animate-spin text-xl" /> : "SIGN UP"}
         </button>
         <p className="text-sm text-gray-300 text-center">
-          Already have an account ?{" "}
+          Already have an account?{" "}
           <Link
-            to="/login"
+            to="/"
             className="text-[#00F4E2] font-medium hover:underline hover:text-[#00dfce] transition"
           >
             LOGIN
@@ -133,4 +148,4 @@ const Ragister = () => {
   );
 };
 
-export default Ragister;
+export default Register;
